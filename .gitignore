@@ -1,0 +1,7 @@
+.vs/
+obj/
+AssingmentStorage/
+LibraryStorage/
+Result/
+bin/
+*.user
