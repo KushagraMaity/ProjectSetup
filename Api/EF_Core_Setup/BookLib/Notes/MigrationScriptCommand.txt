@@ -1,0 +1,9 @@
+﻿###################################################  DB migration  in sql  #############################################################
+It create DataBase and all operation of DB can be done using script in Visual Studio in .netCore it required 2 packages 
+1.Microsoft.EntityFrameworkCore.Design
+2.Microsoft.EntityFrameworkCore.Tools
+
+
+>> To create DataBase
+Add-Migration InitDb               //InitDb => you can write any name of db
+Remove-Migration

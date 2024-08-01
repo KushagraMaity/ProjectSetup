@@ -1,11 +1,11 @@
-﻿using BookLib.Model;
+﻿using BookStoreApi.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookLib
+namespace BookStoreApi
 {
     public class Book : IBook
     {

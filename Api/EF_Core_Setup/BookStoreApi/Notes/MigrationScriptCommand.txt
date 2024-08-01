@@ -1,0 +1,17 @@
+﻿###################################################  DB migration  in sql  #############################################################
+It create DataBase and all operation of DB can be done using script in Visual Studio in .netCore it required 2 packages 
+1.Microsoft.EntityFrameworkCore.Design
+2.Microsoft.EntityFrameworkCore.Tools
+
+
+
+Add-Migration InitDb               //InitDb => you can write any name (this is basically keep the detail of the model to maintain changes i.e further we can revert the changes which was done past)
+Remove-Migration
+
+>> To create or update DataBase
+Update-Database 
+
+//it will create database in sql server and name will be based on connection string like 
+Data Source=localhost\\SQLEXPRESS;Initial Catalog=BookDb;Integrated Security=True;TrustServerCertificate=True;Encrypt=false
+"Initial Catalog=BookDb"  => "BookDb" is your DataBaseName
+									

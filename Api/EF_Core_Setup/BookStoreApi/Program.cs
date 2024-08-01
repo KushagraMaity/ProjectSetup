@@ -1,5 +1,6 @@
 
-using BookLib.Model;
+
+using BookStoreApi.Model;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BookLib.Model
+﻿namespace BookStoreApi.Model
 {
     public class T_BOOK
     {
@@ -15,5 +9,8 @@ namespace BookLib.Model
         public DateTime? CreatedOn { get; set; }
         public bool? IsActive { get; set; }
 
+        //creating  forgine key
+        public int LanguageId { get; set; }
+        public T_Language T_Languages { get; set; }
     }
 }
