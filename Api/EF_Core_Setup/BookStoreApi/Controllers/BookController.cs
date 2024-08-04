@@ -9,8 +9,8 @@ namespace BookStoreApi.Controllers
     public class BookController : ControllerBase
     {
         private IBook book;
-        public BookController() {
-            book = new Book();
+        public BookController(IConfiguration config) {
+            book = new Book(config);
         }
 
         [HttpGet("GetBookList")]

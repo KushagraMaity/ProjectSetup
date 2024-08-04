@@ -1,5 +1,6 @@
 
 
+using BookStoreApi.DataRepo;
 using BookStoreApi.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 //entity framework setup
 builder.Services.AddDbContext<BookDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("BookDb")));
+
+builder.Services.AddScoped<ICurrency, Currency>();
+
 
 // Add services to the container.
 

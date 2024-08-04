@@ -1,34 +1,44 @@
-﻿using BookStoreApi.Model;
+﻿using BookStoreApi.DataRepo;
+using BookStoreApi.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/currency")]
     [ApiController]
     public class CurrencyController : ControllerBase
     {
-        private BookDbContext _bookDbContext;
-        public CurrencyController(BookDbContext bookDbContext)
+        
+        private ICurrency _currency;
+
+        public CurrencyController(ICurrency currency,IConfiguration config)
         {
-            this._bookDbContext = bookDbContext;
+            _currency = currency;
+            
         }
 
-        [HttpGet("GeAllCurrenciesWithOutAsync")]
-        public IActionResult GeAllCurrenciesWithOutAsync()
-        {
-            //var result = this._bookDbContext.T_CurrencyTypes.ToList();
-            var result = (from currencis in this._bookDbContext.T_CurrencyTypes select currencis).ToList();
-            return Ok(result);
-        }
 
-        [HttpGet("GeAllCurrenciesWithAsync")]
-        public async Task<IActionResult> GeAllCurrenciesWithAsync()
-        {
-            //var result = await this._bookDbContext.T_CurrencyTypes.ToListAsync();
-            var result = await (from currencis in this._bookDbContext.T_CurrencyTypes select currencis).ToListAsync();
-            return Ok(result);
-        }
+        //[HttpGet("GeAllCurrencies")]
+        //public IActionResult GeAllCurrencies()=> Ok(_currency.GeAllCurrencies());
+
+        [HttpGet("")]
+        public async Task<IActionResult> GeAllCurrenciesAsync() => Ok(await _currency.GeAllCurrenciesAsync());
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetCurrencyByIdAsync([FromRoute] int id) => Ok(await _currency.GetCurrencyByIdAsync(id));
+
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetCurrencyByNameAsync([FromRoute] string name) => Ok(await _currency.GetCurrencyByNameAsync(name));
+        
+        [HttpPost("InsertCurrency/{title}/{disc}")]
+        public async Task<IActionResult> InsertCurrency([FromRoute] string title, [FromRoute] string disc) => Ok(await _currency.InsertCurrency(title,disc));
+        
+        [HttpPost("UpdateCurrency/{id:int}/{title}/{disc}")]
+        public async Task<IActionResult> UpdateCurrency([FromRoute]int id,[FromRoute] string title, [FromRoute] string disc) => Ok(await _currency.UpdateCurrency(id,title,disc));
+        
+        [HttpPost("DeleteCurrency/{id}")]
+        public async Task<IActionResult> DeleteCurrency([FromRoute]int id) => Ok(await _currency.DeleteCurrency(id));
     }
 }
