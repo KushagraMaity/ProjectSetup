@@ -14,25 +14,25 @@ namespace ExcelLib.ExcelOperation
             try
             {
                 Employee emp = new Employee();
-                DataTable table = ConvertModelToDataTable(emp.GetEmployeeDummyData());//JsonConvert.DeserializeObject<DataTable>(JsonConvert.SerializeObject(emp.GetEmployeeDummyData()));
+                DataTable table = ConvertModelToDataTable(emp.GetEmployeeDummyData());
 
                 using (var memory = new MemoryStream())
                 {
                     //Create Spread Sheet
                     using (var doc = SpreadsheetDocument.Create(memory, SpreadsheetDocumentType.Workbook))
                     {
-                        //----------------------------Create Sheet Part Start--------------------------------------------
                         //Create WorkBook
                         WorkbookPart workbookPart = doc.AddWorkbookPart();
                         workbookPart.Workbook = new Workbook();
 
-                        //Create Worksheet      1.Worksheet contain n*sheet
+                        //Create Sheets collection
+                        Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
+
+
+                        //Create Worksheet      
                         WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
                         var sheetData = new SheetData();
                         worksheetPart.Worksheet = new Worksheet(sheetData);
-
-                        //Create Sheets collection
-                        Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
 
                         //Create Sheet 1
                         Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
@@ -40,9 +40,7 @@ namespace ExcelLib.ExcelOperation
                         //Adding sheet to Sheet collection
                         sheets.Append(sheet);
 
-                        //----------------------------Create Sheet Part End--------------------------------------------
-
-
+                        //Data Insertion Part  --start
                         Row headerRow = new Row();
 
                         List<string> columns = new List<string>();
@@ -72,6 +70,7 @@ namespace ExcelLib.ExcelOperation
 
                             sheetData.AppendChild(newRow);
                         }
+                        //Data Insertion Part  --end
 
                         workbookPart.Workbook.Save();
                         memory.Position = 0;
