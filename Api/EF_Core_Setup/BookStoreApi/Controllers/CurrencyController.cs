@@ -27,7 +27,7 @@ namespace BookStoreApi.Controllers
         public async Task<IActionResult> GeAllCurrenciesAsync() => Ok(await _currency.GeAllCurrenciesAsync());
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetCurrencyByIdAsync([FromRoute] int id) => Ok(await _currency.GetCurrencyByIdAsync(id));
+        public async Task<IActionResult> GetCurrencyByIdAsync([FromRoute] int id) => Ok(await _currency.GetCurrencyByIdAsync(id));//Ok(await _currency.GetCurrencyByIdAsync(id));
 
         [HttpGet("{name}")]
         public async Task<IActionResult> GetCurrencyByNameAsync([FromRoute] string name) => Ok(await _currency.GetCurrencyByNameAsync(name));

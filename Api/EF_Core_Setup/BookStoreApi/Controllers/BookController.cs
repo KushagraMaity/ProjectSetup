@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStoreApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    //[Route("api/[controller]/[action]")]
+    [Route("Nilesh/Cookies")]
     [ApiController]
     public class BookController : ControllerBase
     {
@@ -15,6 +16,11 @@ namespace BookStoreApi.Controllers
 
         [HttpGet("GetBookList")]
         public IActionResult GetBooks() => Ok(book.ShowBooks());
-        
+
+        [HttpGet("GetName/{fn}/{ln:int}")]
+        public IActionResult GetName(string fn, int ln)
+        {
+            return Ok(fn+ln);
+        }
     }
 }

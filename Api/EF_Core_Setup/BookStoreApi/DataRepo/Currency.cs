@@ -25,9 +25,17 @@ namespace BookStoreApi.DataRepo
         #nullable disable
         public async Task<ICollection<T_CurrencyType>> GeAllCurrenciesAsync()
         {
-            //var result = await this._bookDbContext.T_CurrencyTypes.ToListAsync();
-            var result = await (from currencis in this._bookDbContext.T_CurrencyTypes select currencis).ToListAsync();
-            return result;
+            try
+            {
+                //var result = await this._bookDbContext.T_CurrencyTypes.ToListAsync();
+                var result = await (from currencis in this._bookDbContext.T_CurrencyTypes select currencis).ToListAsync();
+                
+                return result;
+            }catch(Exception ex)
+            {
+                throw ex; 
+            }
+            
         }
 
         public async Task<T_CurrencyType> GetCurrencyByIdAsync(int id)
@@ -81,7 +89,7 @@ namespace BookStoreApi.DataRepo
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw ;
             }
             return save;
         }
@@ -104,6 +112,11 @@ namespace BookStoreApi.DataRepo
             }
             return save;
         }
+        public void getName()
+        {
+            ///fdsfdsfsfs
+        }
+       
         #endregion
     }
 }

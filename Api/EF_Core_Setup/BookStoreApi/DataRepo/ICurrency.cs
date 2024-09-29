@@ -11,5 +11,6 @@ namespace BookStoreApi.DataRepo
         Task<string> InsertCurrency(string title, string description);
         Task<string> UpdateCurrency(int id, string title, string description);
         Task<string> DeleteCurrency(int id);
+        
     }
 }
