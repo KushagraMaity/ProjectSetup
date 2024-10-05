@@ -4,9 +4,9 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Newtonsoft.Json;
 using System.Data;
 
-namespace ExcelLib.ExcelOperation
+namespace ExcelLib.OpenXmlUtility
 {
-    public class Excel
+    public class BaseOpenXmlExcel
     {
         public virtual byte[] CreateDummyExcel()
         {
@@ -14,25 +14,25 @@ namespace ExcelLib.ExcelOperation
             try
             {
                 Employee emp = new Employee();
-                DataTable table = ConvertModelToDataTable(emp.GetEmployeeDummyData());
+                DataTable table = ConvertModelToDataTable(emp.GetEmployeeDummyData());//JsonConvert.DeserializeObject<DataTable>(JsonConvert.SerializeObject(emp.GetEmployeeDummyData()));
 
                 using (var memory = new MemoryStream())
                 {
                     //Create Spread Sheet
                     using (var doc = SpreadsheetDocument.Create(memory, SpreadsheetDocumentType.Workbook))
                     {
+                        //----------------------------Create Sheet Part Start--------------------------------------------
                         //Create WorkBook
                         WorkbookPart workbookPart = doc.AddWorkbookPart();
                         workbookPart.Workbook = new Workbook();
 
-                        //Create Sheets collection
-                        Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
-
-
-                        //Create Worksheet      
+                        //Create Worksheet      1.Worksheet contain n*sheet
                         WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
                         var sheetData = new SheetData();
                         worksheetPart.Worksheet = new Worksheet(sheetData);
+
+                        //Create Sheets collection
+                        Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
 
                         //Create Sheet 1
                         Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
@@ -40,7 +40,9 @@ namespace ExcelLib.ExcelOperation
                         //Adding sheet to Sheet collection
                         sheets.Append(sheet);
 
-                        //Data Insertion Part  --start
+                        //----------------------------Create Sheet Part End--------------------------------------------
+
+
                         Row headerRow = new Row();
 
                         List<string> columns = new List<string>();
@@ -70,7 +72,6 @@ namespace ExcelLib.ExcelOperation
 
                             sheetData.AppendChild(newRow);
                         }
-                        //Data Insertion Part  --end
 
                         workbookPart.Workbook.Save();
                         memory.Position = 0;
@@ -109,7 +110,7 @@ namespace ExcelLib.ExcelOperation
                         //Create Sheets collection
                         Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
 
-                        UInt16 i = 1;
+                        ushort i = 1;
                         foreach (DataTable table in ds.Tables)
                         {
 
@@ -188,6 +189,118 @@ namespace ExcelLib.ExcelOperation
             }
 
             return ds;
+        }
+
+        public virtual byte[] CreateExcel(DataTable table)
+        {
+            byte[]? result = null;
+            try
+            {
+                using (var memory = new MemoryStream())
+                {
+                    //Create Spread Sheet
+                    using (var doc = SpreadsheetDocument.Create(memory, SpreadsheetDocumentType.Workbook))
+                    {
+                        //----------------------------Create Sheet Part Start--------------------------------------------
+                        //Create WorkBook
+                        WorkbookPart workbookPart = doc.AddWorkbookPart();
+                        workbookPart.Workbook = new Workbook();
+
+                        //Create Worksheet      1.Worksheet contain n*sheet
+                        WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                        var sheetData = new SheetData();
+                        worksheetPart.Worksheet = new Worksheet(sheetData);
+
+                        //Create Sheets collection
+                        Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
+
+                        //Create Sheet 1
+                        Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
+
+                        //Adding sheet to Sheet collection
+                        sheets.Append(sheet);
+
+                        //----------------------------Create Sheet Part End--------------------------------------------
+
+
+                        Row headerRow = new Row();
+
+                        List<string> columns = new List<string>();
+
+                        //foreach (DataColumn column in table.Columns)
+                        //{
+                        //    columns.Add(column.ColumnName);
+
+                        //    Cell cell = new Cell();
+                        //    cell.DataType = CellValues.String;
+                        //    cell.CellValue = new CellValue(column.ColumnName);
+                        //    headerRow.AppendChild(cell);
+                        //}
+
+                        //sheetData.AppendChild(headerRow);
+
+                        Header(table, columns, headerRow, sheetData);
+
+                        //foreach (DataRow dsRow in table.Rows)
+                        //{
+                        //    Row newRow = new Row();
+                        //    foreach (string col in columns)
+                        //    {
+                        //        Cell cell = new Cell();
+                        //        cell.DataType = CellValues.String;
+                        //        cell.CellValue = new CellValue(dsRow[col].ToString());
+                        //        newRow.AppendChild(cell);
+                        //    }
+
+                        //    sheetData.AppendChild(newRow);
+                        //}
+
+                        RowBaseOperation(table, columns, sheetData);
+
+                        workbookPart.Workbook.Save();
+                        memory.Position = 0;
+                    }
+                    result = memory.ToArray();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return result;
+        }
+
+        private void Header(DataTable table, List<string> columns, Row headerRow, SheetData sheetData)
+        {
+            foreach (DataColumn column in table.Columns)
+            {
+                columns.Add(column.ColumnName);
+
+                Cell cell = new Cell();
+                cell.DataType = CellValues.String;
+                cell.CellValue = new CellValue(column.ColumnName);
+                headerRow.AppendChild(cell);
+            }
+
+            sheetData.AppendChild(headerRow);
+        }
+
+        private void RowBaseOperation(DataTable table, List<string> columns, SheetData sheetData)
+        {
+            foreach (DataRow dsRow in table.Rows)
+            {
+                Row newRow = new Row();
+                foreach (string col in columns)
+                {
+                    Cell cell = new Cell();
+                    cell.DataType = CellValues.String;
+                    cell.CellValue = new CellValue(dsRow[col].ToString());
+                    newRow.AppendChild(cell);
+                }
+
+                sheetData.AppendChild(newRow);
+            }
         }
     }
 
