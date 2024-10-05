@@ -1,6 +1,7 @@
-﻿using ExcelLib.ExcelOperation;
-using ExcelApi.LibraryIntegration;
+﻿using ExcelApi.LibraryIntegration;
 using System.Runtime.CompilerServices;
+using ExcelApi.Model;
+using ExcelLib.OpenXmlUtility;
 
 namespace ExcelApi.Services
 {
@@ -8,8 +9,9 @@ namespace ExcelApi.Services
     {
         public static void AddServicesExtension(this IServiceCollection srv)
         {
-            srv.AddScoped<IExcelLib, XlsxLib>();
-            srv.AddScoped<Xlsx>();
+            srv.AddScoped<IOpenXmlLib, OpenXmlLib>();
+            srv.AddScoped<OpenXml>();
+            srv.AddSingleton<UserDetails>();
         }
     }
 }
