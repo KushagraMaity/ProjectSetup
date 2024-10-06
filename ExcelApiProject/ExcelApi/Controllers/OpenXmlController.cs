@@ -1,6 +1,9 @@
-﻿using ExcelApi.LibraryIntegration;
+﻿using DocumentFormat.OpenXml.EMMA;
 using ExcelApi.Model;
+using ExcelLib.OpenXmlUtility;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Data;
 
 namespace ExcelApi.Controllers
 {
@@ -9,22 +12,52 @@ namespace ExcelApi.Controllers
     public class OpenXmlController : ControllerBase
     {
         private readonly string _contentType;
-        private IOpenXmlLib _xlsx;
+        private OpenXml _openXml;
         private UserDetails _userDetails;
 
-        public OpenXmlController(IOpenXmlLib xlsx,UserDetails userDetails)
+        public OpenXmlController(OpenXml openXml, UserDetails userDetails)
         {
-            _xlsx = xlsx;
-            _contentType = _xlsx.contentType;//"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            _openXml = openXml;
+            _contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             _userDetails = userDetails;
         }
 
-        [HttpGet("CreateExcelFileWithDummy")]
+        [HttpGet("CreateExcelFile")]
         public IActionResult CreateExcelSheet()
         {
             var table = _userDetails.ConvertModelToDataTable(_userDetails.GetEmployeeDummyData());
-            var result = _xlsx.CreateExcelSheet(table);
-            return File(result, _contentType, "DemoExcelFile.xlsx");
+            var result = _openXml.CreateExcel(table);
+            return File(result, _contentType, "DemoExcelFile.openXml");
+        }
+
+        [HttpPost("ReadExcelFile")]
+        public IActionResult ReadExcelSheet(IFormFile file)
+        {
+
+            FileValidationResp obj = new FileValidationResp(file);
+            if (!obj.ValidateFileExcelFile().Status)
+            {
+                return Ok(obj.Message);
+            }
+
+            var result = _openXml.ReadExcel(file.OpenReadStream());
+            var a = JsonConvert.SerializeObject(result,Formatting.Indented);
+            return Ok(a);
+        }
+
+        [HttpPost("ReadExcelAsString")]
+        public IActionResult ReadExcelAsString(IFormFile file)
+        {
+
+            FileValidationResp obj = new FileValidationResp(file);
+            if (!obj.ValidateFileExcelFile().Status)
+            {
+                return Ok(obj.Message);
+            }
+
+            var result = _openXml.ReadExcelAsString(file.OpenReadStream());
+            
+            return Ok(result);
         }
     }
 }
