@@ -314,43 +314,5 @@ namespace ExcelLib.OpenXmlUtility
         }
     }
 
-    internal class Employee
-    {
-        public string? ID { get; set; }
-        public string? Name { get; set; }
-        public string? City { get; set; }
-        public string? Country { get; set; }
-
-        public List<Employee> GetEmployeeDummyData()
-        {
-            return new List<Employee> {
-                new Employee { ID = "1001", Name = "ABCD", City = "City1", Country = "USA" },
-                new Employee { ID = "1002", Name = "PQRS", City = "City2", Country = "INDIA" },
-                new Employee { ID = "1003", Name = "XYZZ", City = "City3", Country = "CHINA" },
-                new Employee { ID = "1004", Name = "LMNO", City = "City4", Country = "UK" },
-            };
-        }
-
-        public List<List<Employee>> GetEmployeeDummyDataWithMultiList()
-        {
-            List<Employee> employees = new List<Employee> {
-                new Employee { ID = "1001", Name = "ABCD", City = "City1", Country = "USA" },
-                new Employee { ID = "1002", Name = "PQRS", City = "City2", Country = "INDIA" },
-                new Employee { ID = "1003", Name = "XYZZ", City = "City3", Country = "CHINA" },
-                new Employee { ID = "1004", Name = "LMNO", City = "City4", Country = "UK" },
-            };
-            List<Employee> employees1 = new List<Employee> {
-                new Employee { ID = "1005", Name = "ABC1", City = "City5", Country = "USA" },
-                new Employee { ID = "1006", Name = "PQR2", City = "City6", Country = "INDIA" },
-                new Employee { ID = "1007", Name = "XYZ3", City = "City7", Country = "CHINA" },
-                new Employee { ID = "1008", Name = "LMN4", City = "City8", Country = "UK" },
-            };
-
-            List<List<Employee>> emp = new List<List<Employee>>();
-            emp.Add(employees);
-            emp.Add(employees1);
-
-            return emp;
-        }
-    }
+    
 }

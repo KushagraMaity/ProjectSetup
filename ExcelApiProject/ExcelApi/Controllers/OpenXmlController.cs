@@ -27,7 +27,7 @@ namespace ExcelApi.Controllers
         {
             var table = _userDetails.ConvertModelToDataTable(_userDetails.GetEmployeeDummyData());
             var result = _openXml.CreateExcel(table);
-            return File(result, _contentType, "DemoExcelFile.openXml");
+            return File(result, _contentType, "DemoExcelFile.xlsx");
         }
 
         [HttpPost("ReadExcelFile")]
