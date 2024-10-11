@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ExcelLib.OpenXmlUtility
 {
-    public class BaseOpenXmlExcel
+    public class OpenXmlAction
     {
         public virtual byte[] CreateExcel(DataTable table)
         {
@@ -30,7 +30,7 @@ namespace ExcelLib.OpenXmlUtility
                         //Create Sheets collection
                         Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
 
-                        SheetDataCreation(workbookPart,worksheetPart,sheets,table,1);
+                        SheetDataCreation(workbookPart, worksheetPart, sheets, table, 1);
 
                         workbookPart.Workbook.Save();
                         memory.Position = 0;
@@ -46,13 +46,14 @@ namespace ExcelLib.OpenXmlUtility
             return result;
         }
 
-        public virtual byte[] CreateMultipleExcel(DataSet ds)
+        public virtual byte[] CreateMultipleSheet(DataSet ds)
         {
             byte[]? result = null;
             try
             {
                 using (var memory = new MemoryStream())
                 {
+                    ushort i = 1;
                     //Create Spread Sheet
                     using (var doc = SpreadsheetDocument.Create(memory, SpreadsheetDocumentType.Workbook))
                     {
@@ -69,9 +70,10 @@ namespace ExcelLib.OpenXmlUtility
                         //Multiple Sheet Creation 
                         foreach (DataTable table in ds.Tables)
                         {
-                            SheetDataCreation(workbookPart, worksheetPart, sheets, table, 1);
+                            SheetDataCreation(workbookPart, worksheetPart, sheets, table, i);
+                            i++;
                         }
-                        
+
                         workbookPart.Workbook.Save();
                         memory.Position = 0;
                     }
@@ -92,7 +94,7 @@ namespace ExcelLib.OpenXmlUtility
             DataSet ds = new DataSet();
             try
             {
-                
+
                 using (SpreadsheetDocument doc = SpreadsheetDocument.Open(stream, false))
                 {
                     //Create workbook part
@@ -130,7 +132,7 @@ namespace ExcelLib.OpenXmlUtility
                                             SharedStringItem item = workBookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
                                             if (item.Text != null)
                                             {
-                                                //first row will provide the column name i.e Header part
+                                                //first row will provide the column name i.e CreateHeaderRow part
                                                 if (currentRow == 0)
                                                 {
                                                     dt.Columns.Add(item.Text.Text);
@@ -190,7 +192,7 @@ namespace ExcelLib.OpenXmlUtility
                     //create the object for workbook part  
                     WorkbookPart workbookPart = doc.WorkbookPart;
                     Sheets sheetCollection = workbookPart.Workbook.GetFirstChild<Sheets>();
-                    
+
 
                     //using for each loop to get the sheet from the sheetCollection  
                     foreach (Sheet sheet in sheetCollection)
@@ -240,7 +242,7 @@ namespace ExcelLib.OpenXmlUtility
                             }
                             excelResult.AppendLine();
                         }
-                        
+
                     }
                 }
             }
@@ -252,7 +254,7 @@ namespace ExcelLib.OpenXmlUtility
         }
 
 
-        private void Header(DataTable table, List<string> columns, Row headerRow, SheetData sheetData)
+        private void CreateHeaderRow(DataTable table, List<string> columns, Row headerRow, SheetData sheetData)
         {
             foreach (DataColumn column in table.Columns)
             {
@@ -284,15 +286,16 @@ namespace ExcelLib.OpenXmlUtility
             }
         }
 
-        private void SheetDataCreation(WorkbookPart workbookPart,WorksheetPart worksheetPart,Sheets sheets, DataTable table,ushort i)
+        private void SheetDataCreation(WorkbookPart workbookPart, WorksheetPart worksheetPart, Sheets sheets, DataTable table, ushort i)
         {
             try
             {
+                table.TableName = string.IsNullOrEmpty(table.TableName) ? $"Sheet{i}" : table.TableName;
                 var sheetData = new SheetData();
                 worksheetPart.Worksheet = new Worksheet(sheetData);
 
                 //Create Sheet 1
-                Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
+                Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = i, Name = table.TableName };
 
                 //Adding sheet to Sheet collection
                 sheets.Append(sheet);
@@ -302,7 +305,7 @@ namespace ExcelLib.OpenXmlUtility
 
                 List<string> columns = new List<string>();
 
-                Header(table, columns, headerRow, sheetData);
+                CreateHeaderRow(table, columns, headerRow, sheetData);
 
                 RowBaseOperation(table, columns, sheetData);
             }
@@ -314,5 +317,5 @@ namespace ExcelLib.OpenXmlUtility
         }
     }
 
-    
+
 }

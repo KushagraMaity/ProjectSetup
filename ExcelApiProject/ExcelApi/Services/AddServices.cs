@@ -1,4 +1,5 @@
 ﻿using ExcelApi.Model;
+using ExcelLib.CsvHelper;
 using ExcelLib.OpenXmlUtility;
 
 namespace ExcelApi.Services
@@ -8,7 +9,8 @@ namespace ExcelApi.Services
         public static void AddServicesExtension(this IServiceCollection srv)
         {
 
-            srv.AddScoped<OpenXml>();
+            srv.AddScoped<ExtendedOpenXml>();
+            srv.AddScoped<CsvHelper>();
             srv.AddSingleton<UserDetails>();
         }
     }

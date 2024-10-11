@@ -11,23 +11,37 @@ namespace ExcelApi.Controllers
     [ApiController]
     public class OpenXmlController : ControllerBase
     {
-        private readonly string _contentType;
-        private OpenXml _openXml;
+        private ExtendedOpenXml _openXml;
         private UserDetails _userDetails;
 
-        public OpenXmlController(OpenXml openXml, UserDetails userDetails)
+        public OpenXmlController(ExtendedOpenXml openXml, UserDetails userDetails)
         {
             _openXml = openXml;
-            _contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             _userDetails = userDetails;
         }
 
         [HttpGet("CreateExcelFile")]
         public IActionResult CreateExcelSheet()
         {
+            string FileName = "OpenXmlNewExcelFile.xlsx";
+            string _contentType = MimeMapping.MimeUtility.GetMimeMapping(FileName);
+
             var table = _userDetails.ConvertModelToDataTable(_userDetails.GetEmployeeDummyData());
             var result = _openXml.CreateExcel(table);
-            return File(result, _contentType, "DemoExcelFile.xlsx");
+
+            return File(result, _contentType, FileName);
+        }
+
+        [HttpGet("CreateMultipleExcelSheet")]
+        public IActionResult CreateMultipleExcelSheet()
+        {
+            string FileName = "OpenXmlDummy.xlsx";
+            string _contentType = MimeMapping.MimeUtility.GetMimeMapping(FileName);
+
+            var ds = _userDetails.ConvertModelToDataSet(_userDetails.GetEmployeeDummyDataWithMultiList());
+            var result = _openXml.CreateMultipleSheet(ds);
+
+            return File(result, _contentType, FileName);
         }
 
         [HttpPost("ReadExcelFile")]
