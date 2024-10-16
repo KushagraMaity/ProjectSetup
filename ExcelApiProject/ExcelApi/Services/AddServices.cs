@@ -1,6 +1,7 @@
 ﻿using ExcelApi.Model;
 using ExcelLib.CsvHelper;
-using ExcelLib.OpenXmlUtility;
+using ExcelLib.NpoiHelper;
+using ExcelLib.OpenXmlHelper;
 
 namespace ExcelApi.Services
 {
@@ -10,6 +11,7 @@ namespace ExcelApi.Services
         {
 
             srv.AddScoped<ExtendedOpenXml>();
+            srv.AddScoped<ExtendedNpoi>();
             srv.AddScoped<CsvHelper>();
             srv.AddSingleton<UserDetails>();
         }

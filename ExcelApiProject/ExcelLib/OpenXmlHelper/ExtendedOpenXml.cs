@@ -2,7 +2,7 @@
 
 using System.Data;
 
-namespace ExcelLib.OpenXmlUtility
+namespace ExcelLib.OpenXmlHelper
 {
     public class ExtendedOpenXml : OpenXmlAction
     {

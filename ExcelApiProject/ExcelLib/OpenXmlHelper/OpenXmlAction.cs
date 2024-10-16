@@ -6,7 +6,7 @@ using System.Data;
 using System.Text;
 #nullable disable
 
-namespace ExcelLib.OpenXmlUtility
+namespace ExcelLib.OpenXmlHelper
 {
     public class OpenXmlAction
     {
@@ -253,6 +253,55 @@ namespace ExcelLib.OpenXmlUtility
             return excelResult.ToString();
         }
 
+        public virtual byte[] ConvertExcelToCsv(Stream excelFile)
+        {
+            byte[] bytes = null;
+            using (SpreadsheetDocument doc = SpreadsheetDocument.Open(excelFile, false))
+            {
+                WorkbookPart workbookPart = doc.WorkbookPart;
+                Sheet sheet = workbookPart.Workbook.Sheets.GetFirstChild<Sheet>();
+                WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
+                SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+
+                var csvData = CsvString(workbookPart, sheetData);
+                bytes = Encoding.ASCII.GetBytes(csvData);
+            }
+            return bytes;
+        }
+
+        private string CsvString(WorkbookPart workbookPart, SheetData sheetData)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (Row row in sheetData.Elements<Row>())
+            {
+                bool firstCell = true;
+                foreach (Cell cell in row.Elements<Cell>())
+                {
+                    if (!firstCell)
+                    {
+                        sb.Append(',');
+                    }
+
+                    string cellValue = GetCellValue(cell, workbookPart);
+
+                    sb.Append(cellValue);
+
+                    firstCell = false;
+                }
+                sb.Append('\n');
+            }
+            return sb.ToString();
+        }
+
+        private string GetCellValue(Cell cell, WorkbookPart workbookPart)
+        {
+            string value = cell.CellValue?.InnerText;
+            if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+            {
+                return workbookPart.SharedStringTablePart.SharedStringTable.ChildElements[int.Parse(value)].InnerText;
+            }
+            return value;
+        }
 
         private void CreateHeaderRow(DataTable table, List<string> columns, Row headerRow, SheetData sheetData)
         {
