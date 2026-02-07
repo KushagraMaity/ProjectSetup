@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStoreApi.Controllers
 {
-    //[Route("api/[controller]/[action]")]
-    [Route("Nilesh/Cookies")]
+    [Route("api/[controller]/[action]")]
+    //[Route("Nilesh/Cookies")]
     [ApiController]
     public class BookController : ControllerBase
     {
