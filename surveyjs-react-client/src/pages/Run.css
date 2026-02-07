@@ -1,0 +1,27 @@
+/* Dim effect */
+.question-readonly {
+  opacity: 0.6;
+}
+
+/* Lock icon */
+.lock-icon {
+  position: absolute;
+  top: 44%;
+  right: 46%;
+  font-size: 200%;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index:50;
+}
+
+/* Prevent interaction with inputs */
+.question-readonly input,
+.question-readonly textarea,
+.question-readonly select {
+  pointer-events: none;
+}
+
+
+.question-container-lock{
+    opacity: 0.6;
+}
